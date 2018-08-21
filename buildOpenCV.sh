@@ -13,7 +13,7 @@ INSTALL_DIR=/usr/local
 #  OPENCV_TEST_DATA_PATH=../opencv_extra/testdata
 # Make sure that you set this to YES
 # Value should be YES or NO
-DOWNLOAD_OPENCV_EXTRAS=NO
+DOWNLOAD_OPENCV_EXTRAS=YES
 # Source code directory
 OPENCV_SOURCE_DIR=$HOME
 WHEREAMI=$PWD
@@ -126,6 +126,11 @@ if [ $DOWNLOAD_OPENCV_EXTRAS == "YES" ] ; then
  git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 fi
 
+cd $OPENCV_SOURCE_DIR
+git clone https://github.com/opencv/opencv_contrib.git
+cd opencv_contrib
+git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
+
 cd $OPENCV_SOURCE_DIR/opencv
 mkdir build
 cd build
@@ -151,6 +156,7 @@ time cmake -D CMAKE_BUILD_TYPE=RELEASE \
       -D WITH_GSTREAMER_0_10=OFF \
       -D WITH_QT=ON \
       -D WITH_OPENGL=ON \
+      -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
       ../
 
 if [ $? -eq 0 ] ; then
