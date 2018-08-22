@@ -2,7 +2,7 @@
 # License: MIT. See license file in root directory
 # Copyright(c) JetsonHacks (2017-2018)
 
-OPENCV_VERSION=3.4.1
+OPENCV_VERSION=3.4.0
 # Jetson TX2
 ARCH_BIN=6.2
 # Jetson TX1
@@ -13,7 +13,9 @@ INSTALL_DIR=/usr/local
 #  OPENCV_TEST_DATA_PATH=../opencv_extra/testdata
 # Make sure that you set this to YES
 # Value should be YES or NO
-DOWNLOAD_OPENCV_EXTRAS=YES
+DOWNLOAD_OPENCV_EXTRAS=NO
+# Download the opencv_contrib repository
+DOWNLOAD_OPENCV_CONTRIB=YES
 # Source code directory
 OPENCV_SOURCE_DIR=$HOME
 WHEREAMI=$PWD
@@ -126,10 +128,14 @@ if [ $DOWNLOAD_OPENCV_EXTRAS == "YES" ] ; then
  git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
 fi
 
-cd $OPENCV_SOURCE_DIR
-git clone https://github.com/opencv/opencv_contrib.git
-cd opencv_contrib
-git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
+if [ $DOWNLOAD_OPENCV_CONTRIB == "YES" ] ; then
+ echo "Installing opencv_contrib"
+ # This is for contrib modules (aruco, etc.)
+ cd $OPENCV_SOURCE_DIR
+ git clone https://github.com/opencv/opencv_contrib.git
+ cd opencv_contrib
+ git checkout -b v${OPENCV_VERSION} ${OPENCV_VERSION}
+fi
 
 cd $OPENCV_SOURCE_DIR/opencv
 mkdir build
@@ -137,7 +143,8 @@ cd build
 
 # Here are some options to install source examples and tests
 #     -D INSTALL_TESTS=ON \
-#     -D OPENCV_TEST_DATA_PATH=../opencv_extra/testdata \
+#     -D OPENCV_TEST_DATA_PATH=../../opencv_extra/testdata \
+#     -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
 #     -D INSTALL_C_EXAMPLES=ON \
 #     -D INSTALL_PYTHON_EXAMPLES=ON \
 # There are also switches which tell CMAKE to build the samples and tests
